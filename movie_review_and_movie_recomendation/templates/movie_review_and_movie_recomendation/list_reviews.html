@@ -1,0 +1,95 @@
+{% extends 'movie_review_and_movie_recomendation/base.html' %}
+
+{% block title %}Community Critiques | Cinematic Expresso{% endblock %}
+
+{% block content %}
+    <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-white mb-1"><i class="bi bi-chat-square-quote me-2 text-danger"></i>Reviews</h2>
+            <p class="text-muted small mb-0">Genuine perspectives from viewers</p>
+        </div>
+        <a class="btn btn-cine-primary rounded-pill px-4" href="{% url 'movie_review_and_movie_recomendation:add-review' %}">
+            <i class="bi bi-pen me-1"></i> Write Review
+        </a>
+    </div>
+
+    <div class="glass-card p-3 mb-4">
+        <form class="row g-3 align-items-end" method="get">
+            <div class="col-md-6">
+                <label class="form-label small text-muted" for="review-search">Search reviews</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-search"></i></span>
+                    <input class="form-control border-0 bg-transparent text-white" id="review-search" name="q" value="{{ search_query }}" placeholder="Filter reviews by movie, director, or review words...">
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-2">
+                <label class="form-label small text-muted" for="review-language-filter">Language</label>
+                <select class="form-select" id="review-language-filter" name="language">
+                    <option value="">All languages</option>
+                    {% for language in languages %}
+                        <option value="{{ language }}" {% if selected_language == language %}selected{% endif %}>{{ language }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-6 col-md-2">
+                <label class="form-label small text-muted" for="review-director-filter">Director</label>
+                <select class="form-select" id="review-director-filter" name="director">
+                    <option value="">All directors</option>
+                    {% for director in directors %}
+                        <option value="{{ director }}" {% if selected_director == director %}selected{% endif %}>{{ director }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-6 col-md-2">
+                <label class="form-label small text-muted" for="review-release-year-filter">Release year</label>
+                <select class="form-select" id="review-release-year-filter" name="release_year">
+                    <option value="">All years</option>
+                    {% for release_year in release_years %}
+                        <option value="{{ release_year|date:'Y' }}" {% if selected_release_year == release_year|date:'Y' %}selected{% endif %}>{{ release_year|date:"Y" }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12 d-flex flex-wrap gap-2 justify-content-end">
+                <button class="btn btn-cine-primary rounded-pill" type="submit">Filter</button>
+                <a class="btn btn-outline-light rounded-pill" href="{% url 'movie_review_and_movie_recomendation:review-list' %}">Clear filters</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="row g-3">
+        {% for review in reviews %}
+            <div class="col-12">
+                <div class="glass-card p-4">
+                    <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+                        <div>
+                            <h4 class="fw-bold text-white mb-1">{{ review.title }}</h4>
+                            <span class="text-muted small">
+                                Directed by <strong class="text-light">{{ review.director|default:"Unknown" }}</strong>
+                                {% if review.release_date %}&bull; Released {{ review.release_date|date:"Y" }}{% endif %}
+                            </span>
+                            <div class="mt-2">
+                                <span class="badge {% if review.sentiment == 'positive' %}bg-success{% elif review.sentiment == 'negative' %}bg-danger{% else %}bg-secondary{% endif %}">
+                                    {{ review.sentiment|title }} sentiment
+                                </span>
+                            </div>
+                        </div>
+                        <span class="rating-badge fs-6">
+                            <i class="bi bi-star-fill"></i> {{ review.rating|floatformat:1 }} / 10
+                        </span>
+                    </div>
+                    <div class="p-3 my-2 rounded-3 review-panel">
+                        <p class="mb-0 fs-6 fst-italic">“{{ review.review }}”</p>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="glass-card text-center py-5">
+                    <i class="bi bi-chat-left-dots fs-1 text-muted d-block mb-3"></i>
+                    <h5 class="text-white">No critiques found</h5>
+                    <p class="text-muted">Be the first to share your thoughts on this title.</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends 'movie_review_and_movie_recomendation/base.html' %}
+
+{% block title %}Directory | Cinematic Expresso{% endblock %}
+
+{% block content %}
+    <div class="d-flex flex-wrap gap-3 justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-white mb-1"><i class="bi bi-collection-play me-2 text-danger"></i>Movie Database</h2>
+            <p class="text-muted small mb-0">Explore movies and their reviews</p>
+        </div>
+        <a class="btn btn-cine-primary rounded-pill px-4" href="{% url 'movie_review_and_movie_recomendation:add-review' %}">
+            <i class="bi bi-plus-lg me-1"></i> Add Your Review
+        </a>
+    </div>
+
+    <div class="glass-card p-3 mb-4">
+        <form class="row g-3 align-items-end" method="get">
+            <div class="col-md-4">
+                <label class="form-label small text-muted" for="movie-search">Search movies</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-search"></i></span>
+                    <input class="form-control border-0 bg-transparent text-white" id="movie-search" name="q" value="{{ search_query }}" placeholder="Filter by title, director, or language...">
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-2">
+                <label class="form-label small text-muted" for="language-filter">Language</label>
+                <select class="form-select" id="language-filter" name="language">
+                    <option value="">All languages</option>
+                    {% for language in languages %}
+                        <option value="{{ language }}" {% if selected_language == language %}selected{% endif %}>{{ language }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-6 col-md-2">
+                <label class="form-label small text-muted" for="director-filter">Director</label>
+                <select class="form-select" id="director-filter" name="director">
+                    <option value="">All directors</option>
+                    {% for director in directors %}
+                        <option value="{{ director }}" {% if selected_director == director %}selected{% endif %}>{{ director }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-6 col-md-2">
+                <label class="form-label small text-muted" for="release-year-filter">Release year</label>
+                <select class="form-select" id="release-year-filter" name="release_year">
+                    <option value="">All years</option>
+                    {% for release_year in release_years %}
+                        <option value="{{ release_year|date:'Y' }}" {% if selected_release_year == release_year|date:'Y' %}selected{% endif %}>{{ release_year|date:"Y" }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-6 col-md-2">
+                <label class="form-label small text-muted" for="rating-order-filter">Sort by</label>
+                <select class="form-select" id="rating-order-filter" name="rating_order">
+                    <option value="" {% if not selected_rating_order %}selected{% endif %}>Movie title</option>
+                    <option value="highest" {% if selected_rating_order == "highest" %}selected{% endif %}>Highest first</option>
+                    <option value="lowest" {% if selected_rating_order == "lowest" %}selected{% endif %}>Lowest first</option>
+                </select>
+            </div>
+            <div class="col-md-12 d-flex flex-wrap gap-2 justify-content-end">
+                <button class="btn btn-cine-primary rounded-pill" type="submit">Search</button>
+                <a class="btn btn-outline-light rounded-pill" href="{% url 'movie_review_and_movie_recomendation:movie-list' %}">Clear filters</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Movie Card Grid -->
+    <div class="row g-4">
+        {% for movie in movies %}
+            <div class="col-md-6 col-lg-4">
+                <div class="glass-card p-4 h-100 d-flex flex-column position-relative overflow-hidden">
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="badge bg-secondary bg-opacity-25 text-light border border-secondary border-opacity-25">
+                                    {{ movie.language|default:"Unknown Lang" }}
+                                </span>
+                                {% if movie.genre_label %}
+                                    <span class="badge bg-danger bg-opacity-75">{{ movie.genre_label }}</span>
+                                {% else %}
+                                    <span class="badge bg-secondary bg-opacity-50">Genre not found</span>
+                                {% endif %}
+                            </div>
+                            <span class="rating-badge">
+                                <i class="bi bi-star-fill"></i> {{ movie.average_rating|floatformat:1 }} / 10
+                            </span>
+                        </div>
+                        <h4 class="fw-bold mb-2">
+                            <a class="text-white text-decoration-none" href="{% url 'movie_review_and_movie_recomendation:movie-reviews' movie.first_review_id %}">
+                                {{ movie.title }}
+                            </a>
+                        </h4>
+                        <div class="text-muted small d-flex flex-wrap align-items-center gap-2 mb-3">
+                            <span><i class="bi bi-person-video2 me-1"></i>{{ movie.director|default:"Director N/A" }}</span>
+                            {% if movie.release_date %}
+                                <span><i class="bi bi-calendar3 me-1"></i>{{ movie.release_date|date:"Y" }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div
+                        class="mt-3"
+                        role="img"
+                        aria-label="Overall rating: {{ movie.average_rating|floatformat:1 }} out of 10; negative at the left, positive at the right"
+                    >
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="movie-rating-label movie-rating-label-negative">Negative</span>
+                            <span class="movie-rating-label movie-rating-label-positive">Positive</span>
+                        </div>
+                        <div class="movie-rating-meter">
+                            <span class="movie-rating-meter-marker" style="left: {{ movie.rating_percentage }}%;" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="pt-3 mt-3 border-top border-white border-opacity-10 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                        <span class="text-muted small">{{ movie.review_count }} reviews</span>
+                        <a href="{% url 'movie_review_and_movie_recomendation:movie-reviews' movie.first_review_id %}" class="btn btn-sm btn-outline-light rounded-pill px-3">
+                            View Reviews <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="glass-card text-center py-5">
+                    <i class="bi bi-film fs-1 text-muted d-block mb-3"></i>
+                    <h5 class="text-white">No movies found</h5>
+                    <p class="text-muted">Try adjusting your search criteria or add a new movie.</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

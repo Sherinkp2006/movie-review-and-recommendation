@@ -1,0 +1,38 @@
+{% extends 'movie_review_and_movie_recomendation/base.html' %}
+
+{% block title %}Explore & Critique | Cinematic Expresso{% endblock %}
+
+{% block content %}
+<section class="py-5 text-center position-relative">
+    <div class="row justify-content-center py-4">
+        <div class="col-lg-8">
+            <h1 class="display-3 fw-extrabold text-white mb-3" style="letter-spacing: -1.5px;">
+                A Solution for all <span class="text-danger">Movie Lovers</span>
+            </h1>
+            <p class="lead text-muted mb-5 mx-auto" style="max-width: 600px;">
+                Discover movie insights with NLP-powered review analysis. A TF-IDF and Logistic Regression model classifies sentiment, then helps you find films that match your genre and review preferences.
+            </p>
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                <a class="btn btn-cine-primary btn-lg rounded-pill px-4" href="{% url 'movie_review_and_movie_recomendation:movie-list' %}">
+                    <i class="bi bi-film me-2"></i> Browse Movies
+                </a>
+                <a class="btn btn-outline-light btn-lg rounded-pill px-4 glass-card border-secondary" href="{% url 'movie_review_and_movie_recomendation:recommendation' %}">
+                    <i class="bi bi-stars text-warning me-2"></i> Find Movies of your Taste
+                </a>
+                <a class="btn btn-dark btn-lg rounded-pill px-4 border border-secondary border-opacity-25" href="{% url 'movie_review_and_movie_recomendation:add-review' %}">
+                    <i class="bi bi-pencil-square me-2"></i> Post Review
+                </a>
+                {% if request.user.is_staff %}
+                    <a class="btn btn-outline-warning btn-lg rounded-pill px-4" href="{% url 'movie_review_and_movie_recomendation:admin-portal' %}">
+                        <i class="bi bi-shield-lock me-2"></i> Admin Portal
+                    </a>
+                {% else %}
+                    <a class="btn btn-outline-warning btn-lg rounded-pill px-4" href="{% url 'movie_review_and_movie_recomendation:admin-login' %}?next={% url 'movie_review_and_movie_recomendation:admin-portal' %}">
+                        <i class="bi bi-shield-lock me-2"></i> Admin Login
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

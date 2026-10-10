@@ -1,0 +1,26 @@
+{% extends 'movie_review_and_movie_recomendation/base.html' %}
+
+{% block title %}{{ heading }} | Admin Portal{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h2 fw-bold text-white mb-0">{{ heading }}</h1>
+            <a class="btn btn-outline-light rounded-pill" href="{% url 'movie_review_and_movie_recomendation:admin-portal' %}">Back to portal</a>
+        </div>
+        <form class="glass-card p-4 p-md-5" method="post">
+            {% csrf_token %}
+            {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+            {% for field in form %}
+                <div class="mb-3">
+                    <label class="form-label text-light" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors }}</div>{% endif %}
+                </div>
+            {% endfor %}
+            <button class="btn btn-cine-primary rounded-pill px-4 mt-2" type="submit">Save review</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

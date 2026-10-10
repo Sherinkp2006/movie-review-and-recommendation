@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Cinematic Expresso | Movie Reviews & Insights{% endblock %}</title>
+
+    <!-- Google Fonts & Bootstrap 5.3 + Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        :root {
+            --bg-base: #0b0f19;
+            --bg-surface: #121826;
+            --bg-glass: rgba(18, 24, 38, 0.75);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --accent-primary: #e50914;
+            --accent-glow: rgba(229, 9, 20, 0.35);
+            --accent-gold: #ffb703;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-base);
+            color: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(229, 9, 20, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 183, 3, 0.05) 0%, transparent 40%);
+        }
+
+        .navbar-cine {
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .brand-logo {
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ffffff 40%, #e50914 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glass-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .review-panel {
+            background: #1b2433;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #f8fafc;
+        }
+
+        .btn-cine-primary {
+            background: linear-gradient(135deg, #e50914, #b20710);
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            box-shadow: 0 4px 16px var(--accent-glow);
+            transition: all 0.25s ease;
+        }
+        .btn-cine-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(229, 9, 20, 0.5);
+            color: #fff;
+        }
+
+        .rating-badge {
+            background: rgba(255, 183, 3, 0.12);
+            color: var(--accent-gold);
+            border: 1px solid rgba(255, 183, 3, 0.3);
+            border-radius: 999px;
+            padding: 0.25rem 0.65rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.85rem;
+        }
+
+        .movie-rating-meter {
+            position: relative;
+            width: 100%;
+            height: 0.55rem;
+            border-radius: 999px;
+            background: linear-gradient(
+                to right,
+                #ef4444 0%,
+                #facc15 50%,
+                #a3e635 72%,
+                #22c55e 100%
+            );
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.15);
+        }
+
+        .movie-rating-meter-marker {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 0.35rem;
+            height: 1rem;
+            border: 1px solid rgba(11, 15, 25, 0.8);
+            border-radius: 999px;
+            background: #fff;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+        }
+
+        .movie-rating-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .movie-rating-label-negative {
+            color: #fca5a5;
+        }
+
+        .movie-rating-label-positive {
+            color: #86efac;
+        }
+
+        .form-control, .form-select {
+            background-color: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-glass);
+            color: #fff;
+            border-radius: 0.65rem;
+            padding: 0.7rem 1rem;
+        }
+        .form-select {
+            color-scheme: dark;
+        }
+        .form-select option {
+            background-color: #121826;
+            color: #f1f5f9;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: rgba(255, 255, 255, 0.07);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 0.2rem var(--accent-glow);
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-cine sticky-top py-3">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2 brand-logo fs-4" href="{% url 'movie_review_and_movie_recomendation:home' %}">
+                <i class="bi bi-film text-danger"></i> Cinematic Expresso
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavigation">
+                <i class="bi bi-list fs-2 text-light"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNavigation">
+                <ul class="navbar-nav ms-auto align-items-center gap-lg-2 mt-3 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="{% url 'movie_review_and_movie_recomendation:home' %}">
+                            <i class="bi bi-house-door me-1"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="{% url 'movie_review_and_movie_recomendation:movie-list' %}">
+                            <i class="bi bi-collection-play me-1"></i> Movies
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="{% url 'movie_review_and_movie_recomendation:review-list' %}">
+                            <i class="bi bi-chat-square-quote me-1"></i> Reviews
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="{% url 'movie_review_and_movie_recomendation:recommendation' %}">
+                            <i class="bi bi-stars me-1 text-warning"></i> Recomend
+                        </a>
+                    </li>
+                    {% if request.user.is_staff %}
+                        <li class="nav-item">
+                            <a class="nav-link px-3" href="{% url 'movie_review_and_movie_recomendation:admin-portal' %}">
+                                <i class="bi bi-shield-lock me-1"></i> Admin
+                            </a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item ms-lg-2">
+                        <a class="btn btn-cine-primary btn-sm px-3 py-2 rounded-pill" href="{% url 'movie_review_and_movie_recomendation:add-review' %}">
+                            <i class="bi bi-plus-circle me-1"></i> Write Review
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content Area -->
+    <main class="container py-4 flex-grow-1">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert glass-card alert-dismissible fade show d-flex align-items-center border-0 border-start border-4 border-{{ message.tags|default:'info' }} text-white mb-4" role="alert">
+                    <i class="bi bi-info-circle-fill me-2 fs-5 text-{{ message.tags|default:'info' }}"></i>
+                    <div>{{ message }}</div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

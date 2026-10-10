@@ -1,0 +1,54 @@
+{% extends 'movie_review_and_movie_recomendation/base.html' %}
+
+{% block title %}Admin Login | Cinematic Expresso{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7 col-lg-5">
+        <div class="glass-card p-4 p-md-5">
+            <div class="text-center mb-4">
+                <i class="bi bi-shield-lock fs-1 text-warning"></i>
+                <h1 class="h3 fw-bold text-white mt-2">Admin Login</h1>
+                <p class="text-muted mb-0">Sign in with an authorized staff account.</p>
+            </div>
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ next|default:'' }}">
+                <div class="mb-3">
+                    <label class="form-label text-light" for="{{ form.username.id_for_label }}">Username</label>
+                    <input
+                        class="form-control"
+                        id="{{ form.username.id_for_label }}"
+                        name="{{ form.username.html_name }}"
+                        value="{{ form.username.value|default:'' }}"
+                        autocomplete="username"
+                        required
+                        autofocus
+                    >
+                    {% if form.username.errors %}<div class="text-danger small mt-1">{{ form.username.errors }}</div>{% endif %}
+                </div>
+                <div class="mb-4">
+                    <label class="form-label text-light" for="{{ form.password.id_for_label }}">Password</label>
+                    <input
+                        class="form-control"
+                        id="{{ form.password.id_for_label }}"
+                        name="{{ form.password.html_name }}"
+                        type="password"
+                        autocomplete="current-password"
+                        required
+                    >
+                    {% if form.password.errors %}<div class="text-danger small mt-1">{{ form.password.errors }}</div>{% endif %}
+                </div>
+                <button class="btn btn-cine-primary rounded-pill w-100 py-2" type="submit">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Sign in
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

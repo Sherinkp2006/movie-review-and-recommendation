@@ -1,0 +1,65 @@
+{% extends 'movie_review_and_movie_recomendation/base.html' %}
+
+{% block title %}{{ movie.title }} Reviews | Cinematic Expresso{% endblock %}
+
+{% block content %}
+    <div class="d-flex flex-wrap gap-3 justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-white mb-1"><i class="bi bi-chat-square-quote me-2 text-danger"></i>{{ movie.title }}</h2>
+            <p class="text-muted small mb-0">
+                {{ movie.language|default:"Unknown language" }}
+                {% if movie.director %}&bull; Directed by {{ movie.director }}{% endif %}
+                {% if movie.release_date %}&bull; {{ movie.release_date|date:"Y" }}{% endif %}
+            </p>
+        </div>
+        <a class="btn btn-outline-light rounded-pill px-4" href="{% url 'movie_review_and_movie_recomendation:movie-list' %}">
+            <i class="bi bi-arrow-left me-1"></i> Back to Movies
+        </a>
+    </div>
+
+    <div class="row g-3 mb-4" role="group" aria-label="Review sentiment totals">
+        <div class="col-sm-6">
+            <div class="glass-card p-3 h-100">
+                <div class="text-success fw-bold fs-5">{{ positive_review_count }}</div>
+                <div class="text-muted small">Positive reviews <span class="text-secondary">(based on review text)</span></div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="glass-card p-3 h-100">
+                <div class="text-danger fw-bold fs-5">{{ negative_review_count }}</div>
+                <div class="text-muted small">Negative reviews <span class="text-secondary">(based on review text)</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        {% for review in reviews %}
+            <div class="col-12">
+                <div class="glass-card p-4">
+                    <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+                        <span class="text-muted small">
+                            Audience review
+                            <span class="badge {% if review.sentiment == 'positive' %}bg-success{% elif review.sentiment == 'negative' %}bg-danger{% else %}bg-secondary{% endif %} ms-2">
+                                {{ review.sentiment|title }}
+                            </span>
+                        </span>
+                        <span class="rating-badge fs-6">
+                            <i class="bi bi-star-fill"></i> {{ review.rating|floatformat:1 }} / 10
+                        </span>
+                    </div>
+                    <div class="p-3 my-2 rounded-3 review-panel">
+                        <p class="mb-0 fs-6 fst-italic">“{{ review.review }}”</p>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="glass-card text-center py-5">
+                    <i class="bi bi-chat-left-dots fs-1 text-muted d-block mb-3"></i>
+                    <h5 class="text-white">No reviews found</h5>
+                    <p class="text-muted">Be the first to share your thoughts on this movie.</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
